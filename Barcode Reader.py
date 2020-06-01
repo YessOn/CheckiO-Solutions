@@ -13,7 +13,7 @@ def solver(barcode):
     if barcode[0:3] == start and barcode[45:50] == center and barcode[92:95] == end and '0000000' not in barcode:
         # Slice Right hand and Left hand Values
         the_left = barcode[3:45]
-        the_right = barcode[50:85]
+        the_right = barcode[50:92]
 
         answer = []
 
@@ -36,14 +36,15 @@ def solver(barcode):
         answer.insert(0, EO_TABLE.index(bin2dec(fd_binary)))
 
         # Format Right Characters
-        my_digits = [the_right[7*i:7*(i+1)] for i in range(0, 5)]
+        my_digits = [the_right[7*i:7*(i+1)] for i in range(0, 6)]
         for i in my_digits:
             answer.append(RIGHT.index(bin2dec(i)))
 
         # Looking for the Checksum [Check digit]
-        cd = 10 - sum(a*(1, 3)[i % 2] for i, a in enumerate(answer)) % 10
+        cd = 10 - sum(a*(1, 3)[i % 2] for i, a in enumerate(answer[:-1])) % 10
         cd = cd if cd < 10 else 0
-        answer.append(cd)
+        if cd != answer[-1]:
+            return None
 
         # Return the joined answer
         return ''.join(map(str, answer))
